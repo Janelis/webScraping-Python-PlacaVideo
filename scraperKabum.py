@@ -17,37 +17,34 @@ header = {
     "accept": "application/json"
 }
 
-#Loop principal
-while(1):
-    #Request do site
-    r = requests.get(url, headers=header)
+#Request do site
+r = requests.get(url, headers=header)
     
-    #Processamento do get pelo BeautifulSoup
-    soup = BeautifulSoup(r.content, 'html.parser')
+#Processamento do get pelo BeautifulSoup
+soup = BeautifulSoup(r.content, 'html.parser')
     
-    #Obtencao dos dados de preco
-    preco = soup.find_all("span",{"sc-3b515ca1-2 eqqhbT priceCard"})
-    precoList = [k.text.replace(u'\xa0', u' ') for k in preco]
+#Obtencao dos dados de preco
+preco = soup.find_all("span",{"sc-3b515ca1-2 eqqhbT priceCard"})
+precoList = [k.text.replace(u'\xa0', u' ') for k in preco]
     
-    #Obtencao dos dados de nome
-    nome = soup.find_all("span",{"sc-d99ca57-0 cpPIRA sc-ff8a9791-16 dubjqF nameCard"})
-    nomeList = [k.text for k in nome]
+#Obtencao dos dados de nome
+nome = soup.find_all("span",{"sc-d99ca57-0 cpPIRA sc-ff8a9791-16 dubjqF nameCard"})
+nomeList = [k.text for k in nome]
 
-    #Dicionario com nomes e precos **CONSIDERA QUE OS PRECOS E NOMES VEM NA MESMA ORDEM**
-    dictPlacas = dict(zip(nomeList, precoList))
+#Dicionario com nomes e precos **CONSIDERA QUE OS PRECOS E NOMES VEM NA MESMA ORDEM**
+dictPlacas = dict(zip(nomeList, precoList))
 
-    #Filtragem dos dados para a placa RTX 2060 - 12GB
-    dictReturn = {}
-    for i in dictPlacas.keys():
-        if ("2060" in i) and (("12 GB" in i) or ("12GB" in i)):
-            dictReturn[i] = dictPlacas[i]
+#Filtragem dos dados para a placa RTX 2060 - 12GB
+dictReturn = {}
+for i in dictPlacas.keys():
+    if ("2060" in i) and (("12 GB" in i) or ("12GB" in i)):
+        dictReturn[i] = dictPlacas[i]
 
-    print(dictReturn)
+print(dictReturn)
     
-    #Request que envia os dados para um WebHook do site IFTTT, que já administra a posterior passagem para um bot no Discord. 
-    #Chave escondida.
-    k = requests.post("https://maker.ifttt.com/trigger/precokabum/with/key/KEY_WEBHOOKS_IFTTT" , data = { "value1" : str(dictReturn)})
-    time.sleep(600)
+#Request que envia os dados para um WebHook do site IFTTT, que já administra a posterior passagem para um bot no Discord. 
+#Chave escondida.
+k = requests.post("https://maker.ifttt.com/trigger/precokabum/with/key/KEY_WEBHOOKS_IFTTT" , data = { "value1" : str(dictReturn)})
     
     
     
